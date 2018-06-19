@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>
+    <title>Earth Engine App</title>
+    <link type="text/css" rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <link type="text/css" rel="stylesheet" href="./static/css/styles.css">
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed">
+</head>
+
+<body>
+    <!-- Menu -->
+    <div id="menu">
+        <a href="/">
+            <h3 id="title">Earth Engine App</h3>
+            <i id="icon-terrain" class="material-icons md-48">terrain</i>
+            <h3 id="map-title"></h3>
+        </a>
+
+        <!-- Select map menu -->
+        <button id="menu-change-map" class="mdl-button mdl-js-button mdl-button--icon">
+            <i class="material-icons">more_vert</i>
+        </button>
+
+        <div class="mdl-tooltip" data-mdl-for="menu-change-map">Change map</div>
+        <label class="menu-label">Change map</label>
+        <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="menu-change-map">
+            <li class="mdl-menu__item change_map" map_id="0">Elevation</li>
+            <li class="mdl-menu__item change_map" map_id="1">Lights</li>
+            <li class="mdl-menu__item change_map" map_id="2">Temperature</li>
+            <li class="mdl-menu__item change_map" map_id="3">Water Occurrence</li>
+            <li class="mdl-menu__item change_map" map_id="4">Water Change</li>
+            <li class="mdl-menu__item change_map" map_id="5">Forest Change</li>
+            <li class="mdl-menu__item change_map" map_id="6">Vegetation</li>
+        </ul>
+        <!-- /Select map menu -->
+
+        <!-- Button to search a place -->
+        <button id="search-button" class="mdl-button mdl-js-button mdl-button--icon">
+            <i class="material-icons">search</i>
+        </button>
+        <div class="mdl-tooltip" data-mdl-for="search-button">Search</div>
+        <label class="menu-label">Search</label>
+        <!-- /Button to search a place -->
+        <!-- Button to remove EE layer -->
+        <button id="google-button-clear" class="mdl-button mdl-js-button mdl-button--icon">
+            <i class="material-icons">layers_clear</i>
+        </button>
+        <div class="mdl-tooltip" data-mdl-for="google-button-clear">Remove Layer</div>
+        <label id="info-label-clear" class="menu-label">Remove layer</label>
+        <!-- /Button to remove EE layer -->
+        <!-- Button to add EE layer -->
+        <button id="google-button-show" class="mdl-button mdl-js-button mdl-button--icon">
+            <i class="material-icons">layers</i>
+        </button>
+        <div class="mdl-tooltip" data-mdl-for="google-button-show">Add Layer</div>
+        <label id="info-label-show" class="menu-label">Add layer</label>
+        <!-- /Button to add EE layer -->
+        <!-- Button to show map info -->
+        <button id="info-button" class="mdl-button mdl-js-button mdl-button--icon">
+            <i class="material-icons">info_outline</i>
+        </button>
+        <div class="mdl-tooltip" data-mdl-for="info-button">Map info</div>
+        <label id="info-label" class="menu-label">Map info</label>
+        <!-- /Button to show map info -->
+        <!-- /Button to show draw menu -->
+        <button id="button-draw" class="mdl-button mdl-js-button mdl-button--icon">
+            <i class="material-icons">menu</i>
+        </button>
+        <div class="mdl-tooltip" data-mdl-for="button-draw">Draw menu</div>
+        <label id="draw-label" class="menu-label">Draw menu</label>
+        <!-- /Button to show draw menu -->
+        <!-- Switch to allow to draw polygon -->
+        <div id="switch-draw-container">
+            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-draw">
+                <input id="switch-draw" type="checkbox" class="mdl-switch__input">
+                <span class="mdl-switch__label">Custom polygon</span>
+            </label>
+
+        </div>
+        <!-- /Switch to allow to draw polygon -->
+    </div>
+    <!-- /Menu -->
+
+    <!-- Input to search for a place -->
+    <input id="search-input" style="display: none" class="controls" type="text" placeholder="Search for a place">
+    <div id="place-content">
+        <span id="place-name" class="title"></span><br> Place ID <span id="place-id"></span><br>
+        <span id="place-address"></span>
+    </div>
+    <!-- /Input to search for a place -->
+
+    <!-- Google Maps Map -->
+    <div id="map"></div>
+    <!-- /Google Maps Map -->
+
+    <input id="input-save-map" type="hidden" value="1">
+
+    <!-- Spinner -->
+    <div id="spinner" style="display: none;" class="mdl-spinner mdl-js-spinner is-active"></div>
+    <!-- /Spinner -->
+
+    <!-- Map information -->
+    <span id="map-info" style="display: none;" class="mdl-chip mdl-chip--deletable">
+        <span class="mdl-chip__text"></span>
+    <button id="close-map-info" type="button" class="mdl-chip__action"><i class="material-icons">cancel</i></button>
+    </span>
+    <!-- /Map information -->
+
+    <!-- Details panel of each country -->
+    <div id="panel">
+        <div id="panel-wide" class="mdl-card mdl-shadow--2dp">
+            <div class="mdl-card__title">
+                <h2 id="panel-title" class="mdl-card__title-text" . style="color: red"></h2>
+            </div>
+            <!-- Charts -->
+            <div id="panel-chart-line">
+            </div>
+            <div id="panel-chart-bar" style="display: none;">
+            </div>
+            <div id="panel-chart-geo" style="display: none;">
+            </div>
+            <div id="panel-chart-histogram" style="display: none;">
+            </div>
+            <div id="panel-chart-pie" style="display: none;">
+            </div>
+            <!-- /Charts -->
+            <button id="button-zoom-map" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                <i class="material-icons">zoom_out_map</i>
+            </button>
+            <div class="mdl-tooltip mdl-tooltip-show" data-mdl-for="button-zoom-map">Chart Zoom</div>
+            <div id="panel-info" style="display:none" class="mdl-card__supporting-text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sagittis pellentesque lacus eleifend lacinia...
+            </div>
+            <div class="mdl-card__actions mdl-card--border">
+                <!-- Panel buttons -->
+                <a id="panel-wiki" class="mdl-button mdl-button--colored mdl-js-button" target="_blank">
+                    <span id="text-wiki">Wikipedia Article</span>
+                    <i id="icon-wiki" class="material-icons">open_in_new</i>
+                </a>
+                <div class="mdl-tooltip mdl-tooltip--top" data-mdl-for="icon-wiki">Wikipedia Article</div>
+
+                <button id="button-panel-bar" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                    <i class="material-icons">insert_chart</i>
+                </button>
+                <div class="mdl-tooltip mdl-tooltip--top mdl-tooltip-show" data-mdl-for="button-panel-bar">Bar Chart</div>
+
+                <button id="button-panel-line" style="display: none;" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                    <i class="material-icons">show_chart</i>
+                </button>
+                <div class="mdl-tooltip mdl-tooltip--top mdl-tooltip-show" data-mdl-for="button-panel-line">Line Chart</div>
+
+                <button id="panel-download" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                    <i class="material-icons">file_download</i>
+                </button>
+                <div class="mdl-tooltip mdl-tooltip--top mdl-tooltip-show" data-mdl-for="panel-download">Download CSV</div>
+
+                <a id="open-chart" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                    <i id="icon-photo" class="material-icons">photo</i>
+                </a>
+                <div class="mdl-tooltip mdl-tooltip--top mdl-tooltip-show" data-mdl-for="icon-photo">Chart Image</div>
+
+                <button style="display: none" id="show-all-countries" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                    <span id="text-show-all">Show all countries</span>
+                    <span id="text-all">All</span>
+                </button>
+                <!-- /Panel buttons -->
+            </div>
+            <div class="mdl-card__menu">
+                <button id="panel-close" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                    <i class="material-icons">close</i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- /Details panel of each country -->
+
+    <!-- Draw polygon menu -->
+    <div id="menu-draw" style="display:none" class="mdl-card mdl-shadow--2dp">
+        <div class="mdl-card__title mdl-card--expand">
+            <h6>
+                Draw custom polygon
+            </h6>
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <a id="menu-draw-done" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                <i class="material-icons">done</i>
+            </a>
+            <p>Done</p>
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <a id="menu-draw-clear" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                <i class="material-icons">clear</i>
+            </a>
+            <p>Clear</p>
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <a id="menu-draw-color" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                <i class="material-icons">color_lens</i>
+            </a>
+            <p>Change color</p>
+        </div>
+        <div class="mdl-card__menu">
+            <button id="menu-draw-close" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                <i class="material-icons">close</i>
+            </button>
+        </div>
+    </div>
+    <!-- /Draw polygon menu -->
+    <!-- Dialog -->
+    <dialog id="dialog" class="mdl-dialog" style="display: none">
+        <h4 class="mdl-dialog__title" id="dialog-title">An error has occurred</h4>
+        <div class="mdl-dialog__content" id="dialog-text">
+        </div>
+        <div class="mdl-dialog__actions">
+            <button id="dialog-close" type="button" class="mdl-button">Ok</button>
+        </div>
+    </dialog>
+    <!-- /Dialog -->
+    <!-- About -->
+    <button id="button-about" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect">
+        <i class="material-icons">person</i>
+    </button>
+    <div id="snackbar-about" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <a id="button-mail" class="mdl-button mdl-js-button mdl-button--icon" href="mailto:app.earth.engine@gmail.com">
+            <i class="material-icons">mail_outline</i>
+            <button class="mdl-snackbar__action"></button>
+        </a>
+    </div>
+    <!-- /About -->
+    <!-- Other styles -->
+    <link type="text/css" rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link type="text/css" rel="stylesheet" href="./static/css/dialog-polyfill.css">
+    <!-- /Other styles -->
+    <!-- Load of scripts -->
+    <script type="text/javascript" defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        var initMap = function() {
+            // Objects in values dictionary are generated by Earth Engine using main.py and inyected by using Flask template tool Jinja2
+            initialize(
+                '{{ values.map | safe }}',
+                '{{ values.mapid | safe }}',
+                '{{ values.token | safe }}',
+                '{{ values.countries | safe }}',
+                true
+            );
+        };
+    </script>
+    <script type="text/javascript" src="./static/js/maps.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{values.API_KEY}}&libraries=drawing,places&callback=initMap" async defer></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", {
+            "packages": ["corechart", "geochart"]
+        });
+    </script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="./static/js/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="./static/js/dialog-polyfill.js"></script>
+    <script type="text/javascript" async src="https://www.googletagmanager.com/gtag/js?id=UA-118745448-1"></script>
+    <script type="text/javascript">
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag("js", new Date());
+        gtag("config", "UA-118745448-1");
+    </script>
+    <!-- /Load of scripts -->
+
+</body>
+
+</html>

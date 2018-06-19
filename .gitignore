@@ -1,0 +1,8 @@
+env
+__pycache__
+node_modules
+lib
+.vscode
+*.pyc
+*.log
+credentials.json

@@ -1,0 +1,17 @@
+{
+    "name": "earth-engine-app",
+    "version": "1.0.0",
+    "description": "Dynamic maps with EE",
+    "main": "index.html",
+    "author": "Monica Pastor",
+    "license": "MIT",
+    "devDependencies": {
+        "del": "^2.0.2",
+        "gulp": "^3.9.0",
+        "gulp-autoprefixer": "latest",
+        "gulp-csso": "^2.0.0",
+        "gulp-htmlmin": "^3.0.0",
+        "gulp-uglify": "^2.0.0",
+        "run-sequence": "^1.2.2"
+    }
+}

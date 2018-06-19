@@ -1,0 +1,382 @@
+* {
+    font-family: 'Roboto', 'sans-serif';
+}
+
+a {
+    color: black;
+}
+
+#map {
+    position: fixed !important;
+    top: 60px;
+    left: 0;
+    margin-top: 5%;
+    height: 96%;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+}
+
+#panel {
+    display: none;
+    position: absolute;
+    z-index: 80;
+    top: 15%;
+    left: 10px;
+}
+
+#dialog {
+    position: absolute;
+    top: 50%;
+    z-index: 100000;
+}
+
+#map-info {
+    position: absolute;
+    top: 70px;
+    left: 10%;
+    height: auto;
+    line-height: 20px;
+    display: block;
+    overflow: auto;
+    white-space: normal;
+    z-index: 90;
+}
+
+#switch-draw-container {
+    position: absolute;
+    z-index: 1;
+    top: 20px;
+    left: 85%;
+}
+
+#spinner {
+    display: block;
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    top: 50%;
+    left: 50%;
+    z-index: 9999;
+}
+
+#menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: inline-block;
+    z-index: 9999;
+}
+
+#title {
+    display: inline-block;
+    margin: 10px 10px 10px 10px;
+}
+
+#icon-terrain {
+    display: inline-block;
+}
+
+#map-title {
+    display: inline-block;
+    margin: 10px 30px 10px 10px;
+}
+
+#menu-change-map {
+    display: inline-block;
+    margin: 10px 0px 10px 10px;
+}
+
+#panel-wide {
+    width: 800px;
+}
+
+#panel-wide>.mdl-card__title {
+    color: #fff;
+    height: 60px;
+}
+
+#panel-wide>.mdl-card__menu {
+    color: #fff;
+}
+
+#button-zoom-map {
+    position: absolute;
+    z-index: 100;
+    bottom: 15%;
+    right: 5%;
+}
+
+#show-all-countries {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+}
+
+#button-draw,
+#draw-label {
+    display: none;
+}
+
+#menu-draw.mdl-card {
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 30%;
+    left: 70%;
+    z-index: 999;
+}
+
+#menu-draw>.mdl-card__actions {
+    border-color: rgba(62, 78, 184, 0.2);
+}
+
+#menu-draw>.mdl-card__title {
+    align-items: flex-start;
+    margin-top: 20px;
+}
+
+#menu-draw>.mdl-card__actions {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+}
+
+.mdl-card__actions>p {
+    margin-bottom: 0;
+}
+
+#show-menu-draw {
+    position: fixed;
+    right: 3;
+    top: 20;
+}
+
+#icon-wiki,
+#text-all {
+    display: none;
+}
+
+#text-wiki,
+#text-show-all {
+    display: block;
+}
+
+.menu-label {
+    margin-right: 30px;
+    font-size: 12pt;
+}
+
+.controls {
+    top: 50%;
+    left: 40%;
+    position: fixed;
+    z-index: 9000000;
+    margin-top: 10px;
+    border: 1px solid transparent;
+    border-radius: 2px 0 0 2px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    height: 40px;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+#search-input {
+    background-color: #fff;
+    font-family: Roboto;
+    font-size: 15pt;
+    font-weight: 300;
+    margin-left: 12px;
+    padding: 0 11px 0 13px;
+    text-overflow: ellipsis;
+    width: 400px;
+}
+
+#search-input:focus {
+    border-color: #4d90fe;
+}
+
+.search-button i {
+    color: none;
+}
+
+.search-button-show i {
+    color: red;
+}
+
+#place-content {
+    display: none;
+}
+
+#map #place-content {
+    display: inline;
+}
+
+#info-label,
+#info-button {
+    display: none;
+}
+
+#info-label-show,
+#google-map-show,
+#google-button-show {
+    display: none;
+}
+
+.mdl-tooltip {
+    display: none;
+}
+
+.mdl-tooltip-show {
+    display: inline-block;
+}
+
+#button-about {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    color: white;
+}
+
+#button-mail {
+    position: absolute;
+    top: 8px;
+    left: 70%;
+}
+
+#button-mail i {
+    color: white;
+}
+
+@media screen and (max-width: 90em) {
+    #map-title,
+    #title {
+        font-size: 24pt;
+    }
+    #map-info>.mdl-chip__text {
+        font-size: 8pt;
+    }
+    #dialog {
+        top: 30%;
+    }
+    .mdl-switch__label,
+    .menu-label {
+        font-size: 10pt;
+    }
+}
+
+@media screen and (max-width: 75em) {
+    .mdl-tooltip {
+        display: inline-block !important;
+    }
+    .menu-label {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 60em) {
+    h6,
+    #menu-change-map {
+        margin: 0;
+    }
+    h3 {
+        margin-right: 10px;
+    }
+    #icon-terrain {
+        margin-right: 5px;
+    }
+    .mdl-menu__item {
+        height: 32px !important;
+        line-height: 32px !important;
+    }
+    #close-map-info {
+        position: absolute;
+        right: 5px;
+        overflow: unset !important;
+    }
+    #switch-draw-container>.mdl-switch>.mdl-switch__label {
+        display: none;
+    }
+    #map-title,
+    #title,
+    .mdl-dialog__title {
+        font-size: 16pt;
+    }
+    #button-zoom-map,
+    #panel-info {
+        display: none;
+    }
+    #mdl-card__actions {
+        padding: 0px;
+    }
+    #panel-wide>.mdl-card__title {
+        height: 40px;
+        padding: 0px;
+        padding-left: 15px;
+    }
+    #panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 90000;
+        width: 100%;
+        height: 100%;
+    }
+    #panel-close {
+        position: absolute;
+        right: 3px;
+        top: 3px;
+    }
+    #show-all-countries {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+    }
+    .controls {
+        top: 40%;
+        left: 25%;
+    }
+}
+
+@media screen and (max-width: 40.5em) {
+    #map-info,
+    #title,
+    #text-wiki,
+    #text-show-all {
+        display: none;
+    }
+    #map-title {
+        margin: 10px 0px;
+    }
+    #menu-draw.mdl-card {
+        left: 10%;
+    }
+    #icon-wiki,
+    #text-all {
+        display: block;
+    }
+    #panel-wiki {
+        height: auto;
+        min-width: auto;
+        padding: 0;
+    }
+    .controls {
+        top: 40%;
+        left: 5%;
+    }
+    #search-input {
+        width: 300px;
+    }
+}
+
+@media screen and (max-height: 40.5em) {
+    #map {
+        height: 90%;
+    }
+    #dialog {
+        top: 10%;
+    }
+}
