@@ -9,3 +9,4 @@ unittest2==1.1.0
 PyVirtualDisplay==0.2.1
 pyasn1==0.4.2
 pyyaml==5.3.1
+rsa>=4.1 # not directly required, pinned by Snyk to avoid a vulnerability
