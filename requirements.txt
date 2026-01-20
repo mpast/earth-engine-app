@@ -7,7 +7,7 @@ pymemcache==1.4.4
 selenium==3.12.0
 unittest2==1.1.0
 PyVirtualDisplay==0.2.1
-pyasn1==0.4.2
+pyasn1==0.6.2
 pyyaml==5.4
 rsa>=4.7 # not directly required, pinned by Snyk to avoid a vulnerability
 setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
