@@ -4,14 +4,14 @@
  * @param token 
  * @param countries 
  */
-var initialize = function(map, mapId, token, countries, init) {
+var initialize = function(map, mapId, token, countries, init, tileUrl) {
     if (init) {
         this.clearStorage();
         this.data_map = {};
     }
     this.removeListeners();
 
-    this.map = this.createMap(mapId, token);
+    this.map = this.createMap(mapId, token, tileUrl);
 
     this.countries = JSON.parse(countries);
 
@@ -47,7 +47,7 @@ var initialize = function(map, mapId, token, countries, init) {
  * @param mapId 
  * @param token 
  */
-function createMap(mapId, token) {
+function createMap(mapId, token, tileUrl) {
     var lat = sessionStorage.getItem("lat");
     var lng = sessionStorage.getItem("lng");
     if (!lat || !lng) {
@@ -72,10 +72,7 @@ function createMap(mapId, token) {
 
     var eeMapOptions = {
         getTileUrl: function(tile, zoom) {
-            var baseUrl = "https://earthengine.googleapis.com/map";
-            var url = [baseUrl, mapId, zoom, tile.x, tile.y].join("/");
-            url += "?token=" + token;
-            return url;
+            return tileUrl.replace('{z}', zoom).replace('{x}', tile.x).replace('{y}', tile.y);
         },
         tileSize: new google.maps.Size(256, 256)
     };

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, Response, render_template, request
 
 import config
 import os
@@ -8,6 +8,7 @@ import time
 import calendar
 import datetime
 import threading
+import re
 
 import logging, logging.config, yaml
 
@@ -18,7 +19,7 @@ from pymemcache.client.hash import Client
 # CONSTANT DEFINITIONS
 ##################################################################################################
 
-EE_CREDENTIALS = ee.ServiceAccountCredentials(config.EE_ACCOUNT, config.EE_PRIVATE_KEY_FILE)
+EE_CREDENTIALS = None
 
 HIGH_COLLECTION_ID = 'srtm90_v4'
 LIGHTS_COLLECTION_ID = 'NOAA/DMSP-OLS/NIGHTTIME_LIGHTS'
@@ -37,7 +38,8 @@ INITIAL_MAP = '5'
 #logging
 #LOGGER_TYPE = 'file'
 LOGGER_TYPE = 'console'
-logging.config.dictConfig(yaml.load(open('logging.conf')))
+with open('logging.conf') as logging_config:
+  logging.config.dictConfig(yaml.safe_load(logging_config))
 logger = logging.getLogger(LOGGER_TYPE)
 
 ##################################################################################################
@@ -470,8 +472,29 @@ def before_request():
   # development, so wipe the cache every request.
   #app.jinja_env.cache = dict()
   # Initialize Earth Engine
-  ee.Initialize(EE_CREDENTIALS)
+  global EE_CREDENTIALS
+  if EE_CREDENTIALS is None:
+    EE_CREDENTIALS = ee.ServiceAccountCredentials(config.EE_ACCOUNT, config.EE_PRIVATE_KEY_FILE)
+  ee.Initialize(EE_CREDENTIALS, project=config.PROJECT_ID)
   #ee.Initialize()
+
+@app.route('/tiles/<path:map_name>/<int:zoom>/<int(signed=True):x>/<int:y>')
+def get_tile(map_name, zoom, x, y):
+  """Fetch Cloud API tiles with server credentials, independently of workers."""
+  expected = 'projects/' + str(config.PROJECT_ID) + '/maps/'
+  if not map_name.startswith(expected) or not re.fullmatch(r'[A-Za-z0-9_-]+', map_name[len(expected):]):
+    return 'Unknown map', 404
+  if zoom > 30 or y >= 2 ** zoom:
+    return 'Invalid tile coordinates', 400
+  try:
+    tile = ee.data.TileFetcher('', map_name=map_name).fetch_tile(x % (2 ** zoom), y, zoom)
+  except ee.EEException:
+    logger.exception('Earth Engine tile request failed')
+    return 'Tile temporarily unavailable', 502
+  response = Response(tile, mimetype='image/png')
+  response.headers['Cache-Control'] = 'public, max-age=3600'
+  return response
+
 
 # Define root route
 @app.route('/')
@@ -482,7 +505,8 @@ def main():
   template_values = {
     'map': INITIAL_MAP,
     'mapid': mapid['mapid'],
-    'token': mapid['token'],
+    'token': mapid.get('token', ''),
+    'tile_url': '/tiles/' + mapid['mapid'] + '/{z}/{x}/{y}',
     'API_KEY': config.API_KEY,
     'countries' : json.dumps(COUNTRIES_ID)
   }
@@ -498,7 +522,8 @@ def get(id):
   template_values = {
     'map' : id,
     'mapid': mapid['mapid'],
-    'token': mapid['token'],
+    'token': mapid.get('token', ''),
+    'tile_url': '/tiles/' + mapid['mapid'] + '/{z}/{x}/{y}',
     'API_KEY': config.API_KEY,
     'countries' : json.dumps(COUNTRIES_ID)
   }
