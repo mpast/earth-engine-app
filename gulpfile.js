@@ -1,10 +1,11 @@
 'use strict';
 
-var autoprefixer = require('gulp-autoprefixer');
+const autoprefixer = require('gulp-autoprefixer').default;
 var csso = require('gulp-csso');
-var del = require('del');
+const { deleteAsync } = require('del');
 var gulp = require('gulp');
-var htmlmin = require('gulp-htmlmin');
+const { minify } = require('html-minifier-terser');
+const { Transform } = require('node:stream');
 var uglify = require('gulp-uglify');
 
 const AUTOPREFIXER_BROWSERS = [
@@ -23,7 +24,7 @@ const AUTOPREFIXER_BROWSERS = [
 gulp.task('styles', function() {
     return gulp.src('./src/css/*.css')
         // Auto-prefix css styles for cross browser compatibility
-        .pipe(autoprefixer({ browsers: AUTOPREFIXER_BROWSERS }))
+        .pipe(autoprefixer({ overrideBrowserslist: AUTOPREFIXER_BROWSERS }))
         // Minify the file
         .pipe(csso())
         // Output
@@ -42,24 +43,27 @@ gulp.task('scripts', function() {
 //Gulp task to minify HTML files
 gulp.task('templates', function() {
     return gulp.src(['./src/templates/*.html'])
-        .pipe(htmlmin({
-            collapseWhitespace: true,
-            removeComments: true
+        .pipe(new Transform({
+            objectMode: true,
+            transform(file, encoding, callback) {
+                minify(file.contents.toString(), { collapseWhitespace: true, removeComments: true })
+                    .then(html => { file.contents = Buffer.from(html); callback(null, file); }, callback);
+            }
         }))
         .pipe(gulp.dest('./templates'));
 });
 
 //Clean output directory
-gulp.task('clean', () => del(['./static/css', './static/js', './templates']));
+gulp.task('clean', () => deleteAsync(['./static/css/*', './static/js/*', './templates/*'], { onlyFiles: true }));
 
 //Gulp task to minify all files
-gulp.task('run', ['clean', 'styles', 'scripts', 'templates']);
+gulp.task('run', gulp.series('clean', gulp.parallel('styles', 'scripts', 'templates')));
 //Gulp task to watch changes and minify all files
 gulp.task('watch', function() {
-    gulp.watch('./src/css/*.css', ['styles']);
-    gulp.watch('./src/js/*.js', ['scripts']);
-    gulp.watch('./src/templates/*.html', ['templates']);
+    gulp.watch('./src/css/*.css', gulp.series('styles'));
+    gulp.watch('./src/js/*.js', gulp.series('scripts'));
+    gulp.watch('./src/templates/*.html', gulp.series('templates'));
 });
 
 //Gulp tasks by default
-gulp.task('default', ['run', 'watch']);
+gulp.task('default', gulp.series('run', 'watch'));

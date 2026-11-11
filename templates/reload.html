@@ -2,5 +2,7 @@
         '{{ values.map | safe }}',
         '{{ values.mapid | safe }}',
         '{{ values.token | safe }}',
-        '{{ values.countries | safe }}'
+        '{{ values.countries | safe }}',
+        false,
+        {{ values.tile_url | tojson }}
     );</script>
